@@ -1,0 +1,18 @@
+[project]
+name = "carbon-calculator-vercel"
+version = "1.0.0"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "Django>=5.2.8,<5.3",
+    "mysql-connector-python>=9.4,<10",
+    "python-dotenv>=1.0,<2",
+    "dj-database-url>=2.2,<4",
+    "psycopg[binary]>=3.2,<4",
+]
+
+[tool.vercel]
+entrypoint = "vercel_app.wsgi:application"
+
+[tool.vercel.scripts]
+build = "python vercel_build.py"
+

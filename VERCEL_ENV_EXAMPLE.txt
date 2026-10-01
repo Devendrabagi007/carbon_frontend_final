@@ -1,0 +1,18 @@
+Enter these in Vercel's Environment Variables section, not in source code.
+Choose Production. Set up a separate database before enabling Preview builds.
+
+DJANGO_SETTINGS_MODULE=vercel_app.settings
+DJANGO_DEBUG=False
+DJANGO_SECRET_KEY=GENERATE_A_NEW_SECRET_AT_LEAST_50_CHARACTERS_LONG
+DATABASE_URL=postgresql://USER:PASSWORD@HOST/DATABASE?sslmode=require
+
+Generate a secret locally with:
+py -c "import secrets; print(secrets.token_urlsafe(50))"
+
+After deployment, add these using YOUR actual domain and redeploy:
+DJANGO_ALLOWED_HOSTS=your-project.vercel.app
+DJANGO_CSRF_TRUSTED_ORIGINS=https://your-project.vercel.app
+
+Vercel's automatically exposed domain variables are also supported.
+Never upload real credentials to GitHub or share them in screenshots.
+

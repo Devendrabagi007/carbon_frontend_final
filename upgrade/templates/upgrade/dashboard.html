@@ -1,0 +1,144 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Carbon Calculator | Quantum Crew</title>
+    <link rel="stylesheet" href="{% static 'calculator/style.css' %}">
+    <script defer src="{% static 'upgrade/dashboard.js' %}"></script>
+<link rel="stylesheet" href="{% static 'upgrade/gloss.css' %}">
+</head>
+
+<body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header><a class="brand" href="#"><span class="mark" aria-hidden="true">✳</span> Carbon<span
+                class="brand-light">Calculator</span></a>
+        <nav aria-label="Main navigation"><a href="#calculator">Calculator</a><a href="#insights">Your footprint</a><a
+                href="#simulator">What-if simulator</a></nav><div class="account-menu"><span>Hello, {{ request.user.first_name|default:request.user.username }}</span><form action="/logout/" method="post">{% csrf_token %}<button class="signout" type="submit">Log out ↗</button></form></div>
+    </header>
+    <main id="main">
+        <section class="hero">
+            <div>
+                <p class="eyebrow">SMALL CHANGES. A LIGHTER FOOTPRINT.</p>
+                <h1>Your everyday choices.<br><em>A better tomorrow.</em></h1>
+                <p class="intro">Understand your carbon footprint, discover what matters most, and explore the impact of
+                    a different choice.</p><a class="button" href="#calculator">Explore your footprint <span
+                        aria-hidden="true">↗</span></a>
+                <p class="quiet">Travel · Home energy · Food · Lifestyle</p><span class="hero-badge">✧ YOUR PERSONAL CLIMATE COMPANION</span>
+            </div>
+            <div class="hero-art" aria-label="Measure, understand and reduce your footprint">
+                <div class="orbit orbit-one"></div>
+                <div class="orbit orbit-two"></div>
+                <div class="planet"><span aria-hidden="true">✳</span><strong>Every choice<br>counts.</strong></div><span
+                    class="float-tag tag-one">01 / Measure</span><span class="float-tag tag-two">02 /
+                    Understand</span><span class="float-tag tag-three">03 / Reduce</span>
+            </div>
+        </section>
+
+        <section id="calculator" class="section">
+            <div class="section-title">
+                <div>
+                    <p class="eyebrow">01 / YOUR ACTIVITIES</p>
+                    <h2>Start with your everyday.</h2>
+                </div>
+                <p>Enter your personal monthly activity.<br>For shared electricity, enter only your share.</p>
+            </div>
+            <div class="workspace">
+                <form id="footprint-form" class="input-panel">
+                    <div class="panel-heading">
+                        <h3>Your monthly inputs</h3><span class="pill">Per person</span>
+                    </div>
+                    <div class="fields"><label>Travel distance <span>Petrol car · km / month</span><input id="travel"
+                                name="travel" type="number" min="0" max="100000" step="any" value="300"
+                                required></label><label>Electricity use <span>Your share · kWh / month</span><input
+                                id="energy" name="energy" type="number" min="0" max="100000" step="any" value="100"
+                                required></label><label>Food habits <span>Typical diet for this month</span><select
+                                id="food" name="food">
+                                <option value="plant">Mostly plant-based</option>
+                                <option value="vegetarian" selected>Vegetarian</option>
+                                <option value="mixed">Mixed diet</option>
+                            </select></label><label>New purchases <span>Clothing & small goods · items /
+                                month</span><input id="shopping" name="shopping" type="number" min="0" max="10000"
+                                step="1" value="2" required></label></div><button class="button full"
+                        type="submit">Calculate demo footprint <span aria-hidden="true">↗</span></button><button
+                        class="text-button" type="reset">Reset inputs</button>
+                    <details>
+                        <summary>How this demo calculates</summary>
+                        <p>Illustrative multipliers: travel 0.18 kg per km, electricity 0.70 kg per kWh, purchases 15 kg
+                            per item. Monthly diet placeholders: plant-based 70 kg, vegetarian 100 kg, mixed 160 kg
+                            CO₂e. These are UI test values, not sourced emission factors.</p>
+                    </details>
+                </form>
+                <div id="insights" class="result-panel" aria-live="polite">
+                    <div class="panel-heading">
+                        <h3>Your footprint</h3><span class="pill">DEMO ESTIMATE</span>
+                    </div>
+                    <div class="total"><strong id="total">254</strong><span>kg CO₂e / month</span></div>
+                    <p class="result-caption">A starting point to explore your impact.</p>
+                    <div id="breakdown" class="breakdown"></div>
+                    <div class="insight"><span aria-hidden="true">↗</span>
+                        <p id="main-insight"></p>
+                    </div>
+                    <p class="quiet" id="result-status">Showing the sample inputs.</p>
+                </div>
+            </div>
+        </section>
+        <section id="simulator" class="section simulator">
+<div><p class="eyebrow">02 / YOUR POSSIBILITIES LAB</p><h2>Small changes.<br><em>See the bigger picture.</em></h2><p>Build a monthly scenario using your calculated inputs. Mix a few changes and see what they could add up to.</p>
+<div class="presets" aria-label="Scenario presets"><button type="button" data-preset="gentle">✧ Small steps</button><button type="button" data-preset="balanced">↗ Balanced</button><button type="button" data-preset="ambitious">✳ Go further</button></div>
+<div class="slider-control"><label for="travel-cut">Walk or cycle instead of driving <output id="travel-value">20%</output></label><input id="travel-cut" type="range" min="0" max="100" step="5" value="20"></div>
+<div class="slider-control"><label for="energy-cut">Reduce electricity consumption <output id="energy-value">10%</output></label><input id="energy-cut" type="range" min="0" max="100" step="5" value="10"></div>
+<div class="slider-control"><label for="solar-cut">Renewable share of remaining electricity <output id="solar-value">0%</output></label><input id="solar-cut" type="range" min="0" max="100" step="5" value="0"></div>
+<div class="slider-control"><label for="shopping-cut">Buy fewer new items <output id="shopping-value">0%</output></label><input id="shopping-cut" type="range" min="0" max="100" step="5" value="0"></div>
+<label class="diet-label" for="diet-target">Explore a different diet</label><select id="diet-target"><option value="same">Keep my current diet</option><option value="plant">Mostly plant-based</option><option value="vegetarian">Vegetarian</option><option value="mixed">Mixed diet</option></select>
+<button class="text-button" id="reset-scenario" type="button">Reset all scenario changes</button></div>
+<div class="scenario" aria-live="polite"><span class="pill">THE POWER OF YOUR CHOICES</span><p class="scenario-number"><strong id="savings">0</strong><span id="savings-label">kg CO₂e less / month</span></p><div class="comparison"><span>Current monthly estimate <b id="before"></b></span><span>With your changes <b id="after"></b></span></div><p id="percent" class="scenario-message"></p>
+<div class="annual-card"><span>IF YOU KEEP IT UP FOR A YEAR</span><strong id="annual-savings">0 kg</strong><small id="annual-label">potential CO₂e savings</small></div>
+<div id="change-breakdown" class="change-breakdown"></div>
+<label class="goal-label" for="goal">My reduction goal <output id="goal-value">25%</output></label><input id="goal" type="range" min="5" max="100" step="5" value="25"><progress id="goal-progress" value="0" max="100" aria-label="Progress towards reduction goal"></progress><p id="goal-status"></p>
+<small>Illustrative demo, not a verified carbon assessment. Renewable electricity and walking/cycling are modelled as zero operational emissions. Renewable share is applied after energy savings. Shopping reductions are proportional; annual results assume 12 identical months.</small>
+<div class="scenario-actions"><button class="button" type="button" id="pin-scenario">Compare this scenario</button><button class="button secondary" type="button" id="export-scenario">Export CSV</button></div><p id="scenario-status" role="status"></p></div>
+</section>
+<section class="section compare-section" id="scenario-comparison" hidden><div class="section-title"><div><p class="eyebrow">SIDE BY SIDE</p><h2>Find your kind of change.</h2></div><button id="clear-comparisons" class="text-button" type="button">Clear comparison</button></div><p class="quiet">Compare up to three scenarios in this session. Each card captures its own baseline.</p><div id="comparison-cards" class="recommendations"></div></section>
+        <section class="section">
+            <div class="section-title">
+                <div>
+                    <p class="eyebrow">03 / YOUR NEXT STEP</p>
+                    <h2>Make your next choice count.</h2>
+                </div>
+                <p>Suggestions based on your current inputs.</p>
+            </div>
+            <div id="recommendations" class="recommendations"></div>
+        </section>
+        <section class="section history-section">
+            <div class="section-title">
+                <div>
+                    <p class="eyebrow">04 / SEE YOUR PROGRESS</p>
+                    <h2>A record of your changes.</h2>
+                </div><button class="button secondary" id="save" type="button">Save snapshot</button>
+            </div>
+            <p class="quiet">Only you can access your saved snapshots. The latest 50 are shown.</p>
+            <p id="history-status" role="status"></p>
+            <div class="table-wrap">
+                <table>
+                    <caption class="sr-only">Saved snapshots</caption>
+                    <thead>
+                        <tr>
+                            <th>Saved at</th>
+                            <th>Demo footprint</th>
+                            <th>Scenario estimate</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history"></tbody>
+                </table>
+            </div><button id="clear" type="button" class="text-button">Clear saved snapshots</button>
+        </section>
+    </main>
+    <footer><a class="brand" href="#">✳ CarbonCalculator</a>
+        <p>Small steps towards a more sustainable everyday.</p></span>
+    </footer>
+</body>
+
+</html>

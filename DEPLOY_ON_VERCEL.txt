@@ -1,0 +1,114 @@
+CARBON CALCULATOR - FIRST-TIME VERCEL DEPLOYMENT
+
+The deployment configuration is already added. No Python edits are needed.
+Vercel will open the current simple simulator, including login and history.
+The website has not yet been deployed or connected to your online database.
+
+1. EXTRACT AND OPEN
+Extract the ZIP. Open the inner carbon_frontend_final folder in VS Code.
+This is the folder containing manage.py, requirements.txt and pyproject.toml.
+Your normal local command is still: py manage_simple.py runserver
+Local accounts/history still use your local upgrade_accounts.sqlite3 file.
+
+2. CREATE AN ONLINE DATABASE
+Open https://neon.com and create an account and a PostgreSQL project.
+Click Connect. Choose the direct connection (pooling off for this initial
+setup, because the deployment also runs database migrations).
+Copy only the postgresql:// connection URL, not a psql command or quotes.
+Keep SSL parameters such as sslmode=require. Treat the URL as a password.
+Do not add this URL to files you will upload to GitHub.
+The online database starts empty: sign up again on the deployed website.
+Existing local accounts/history are not automatically transferred.
+The original MySQL files remain, but this version's accounts and snapshots
+use Django's database, which becomes PostgreSQL only on Vercel.
+
+3. GENERATE A SECRET
+In VS Code, choose Terminal > New Terminal. Run:
+py -c "import secrets; print(secrets.token_urlsafe(50))"
+Keep the output for the DJANGO_SECRET_KEY setting below.
+
+4. PUT THE PROJECT ON GITHUB
+Create a GitHub account at https://github.com if needed.
+Install GitHub Desktop from https://desktop.github.com and sign in.
+Choose File > Add local repository, selecting carbon_frontend_final.
+If it is not a repository, use the offered option to create a repository
+there. Confirm it is the same folder containing manage.py.
+Review files, commit if prompted, and select Publish repository.
+Keep the repository private.
+
+IMPORTANT: Use GitHub Desktop or Git, not a browser drag-and-drop of the
+whole folder. The ZIP preserves your original .env and Windows .venv for
+local use. The included .gitignore excludes these, local database files and
+Python caches. Check that .env, .venv and *.sqlite3 are NOT in the commit.
+Do not upload the ZIP itself as the repository's source code.
+
+5. IMPORT INTO VERCEL
+Open https://vercel.com and sign in with GitHub.
+For a personal student project, select the personal/Hobby option.
+Choose Add New > Project, allow repository access, and import this repository.
+Framework Preset: Django.
+Root Directory: the directory containing manage.py and pyproject.toml.
+If those files appear directly in the repository, leave it as ./.
+Leave Build, Install and Output overrides disabled/default.
+The build script is already configured in pyproject.toml.
+
+6. ADD ENVIRONMENT VARIABLES BEFORE CLICKING DEPLOY
+Add these four variables in Vercel. Select the Production environment:
+
+DJANGO_SETTINGS_MODULE   vercel_app.settings
+DJANGO_DEBUG             False
+DJANGO_SECRET_KEY        the long secret generated in step 3
+DATABASE_URL             the full PostgreSQL URL copied in step 2
+
+Paste values without quotation marks. Do not paste the example placeholders.
+Deploy the main branch as Production. Before enabling Preview deployments,
+give Preview its own database and environment variables. The build applies
+migrations to the database configured for that deployment; never point an
+experimental preview at your production database.
+
+7. DEPLOY
+Click Deploy and wait. The build checks Django, creates/updates database
+tables with migrate, and Vercel collects CSS and JavaScript automatically.
+You do not need to run migrate manually or add a separate static-file server.
+
+8. SET YOUR DOMAIN
+Copy the actual production domain shown by Vercel, for example:
+carbon-calculator-example.vercel.app
+Under Project > Settings > Environment Variables add, for Production:
+
+DJANGO_ALLOWED_HOSTS          carbon-calculator-example.vercel.app
+DJANGO_CSRF_TRUSTED_ORIGINS    https://carbon-calculator-example.vercel.app
+
+Replace both examples with YOUR assigned domain, without a trailing slash.
+The first value has no https://. The second includes https://.
+Then open Deployments > latest deployment > menu > Redeploy.
+Vercel's automatically exposed domain variables are also recognized.
+For additional custom domains, add comma-separated hosts and HTTPS origins.
+
+9. CHECK THE LIVE WEBSITE
+Open the production link in a browser.
+Sign up, log in, calculate, change simulator units, and save a snapshot.
+Log out, log in again, and check that your saved snapshot remains.
+Check that styles load. The website should work with your computer off.
+
+IF SOMETHING FAILS
+- Build requests DATABASE_URL: add the real URL to the deployment environment.
+- Secret-key error: use the command in step 3 and paste its complete output.
+- Database connection failure: check the Neon URL, database status and SSL.
+- DisallowedHost or 400: check DJANGO_ALLOWED_HOSTS, then redeploy.
+- CSRF/403 on a form: check the exact HTTPS trusted origin, then redeploy.
+- Wrong/old interface: check DJANGO_SETTINGS_MODULE=vercel_app.settings,
+  Framework Preset=Django and the root directory containing pyproject.toml.
+- A preview fails: it needs its own database and environment configuration.
+Share error text/screenshots with secrets hidden if you need help.
+
+WHAT CHANGED
+Added vercel_app/, pyproject.toml, vercel_build.py, .vercelignore and these
+deployment instructions. Added PostgreSQL packages to requirements.txt and
+local-database exclusions to .gitignore. No original files were deleted.
+Existing application source, templates, styling, scripts, .env and launchers
+are preserved. The original ZIP did not contain a saved SQLite database.
+This is deployment configuration, not proof of a successful live deployment.
+
+Reference: https://vercel.com/docs/frameworks/full-stack/django
+Reference: https://vercel.com/kb/guide/is-sqlite-supported-in-vercel
